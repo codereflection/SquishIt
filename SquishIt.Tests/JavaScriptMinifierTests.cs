@@ -16,6 +16,18 @@ namespace SquishIt.Tests
                                             return a + b;
                                         }";
 
+        private string javaScriptDebugger = @"
+                                        function product(a, b)
+                                        {
+                                            return a * b;
+                                            debugger;                                    
+                                        }
+
+                                        function sum(a, b){
+                                            return a + b;
+                                            eval(""debugger"");
+                                        }";
+
         [Test]
         public void NullMinifierTest()
         {
@@ -46,6 +58,14 @@ namespace SquishIt.Tests
             var javaScriptMinifier = MinifierRegistry.Get(YuiMinifier.Identifier);
             string minifiedJavaScript = javaScriptMinifier.CompressContent(javaScript);
             Assert.AreEqual("function product(d,c){return d*c}function sum(d,c){return d+c};", minifiedJavaScript);
+        }
+
+        [Test]
+        public void YuiMinifier_DebuggerStatement_DoesNotThrowException()
+        {
+            var javaScriptMinifier = MinifierRegistry.Get(YuiMinifier.Identifier);
+            string minifiedJavaScript = javaScriptMinifier.CompressContent(javaScriptDebugger);
+            Assert.AreEqual("function product(a,b){return a*b;eval(\"debugger;\")}function sum(a,b){return a+b;eval(\"debugger\")};", minifiedJavaScript);
         }
     }
 }

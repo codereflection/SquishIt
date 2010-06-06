@@ -17,6 +17,10 @@ namespace SquishIt.Framework.JavaScript.Minifiers
 
         public string CompressContent(string content)
         {
+            string pattern = "(?<!\\\")debugger(?<!\\\");";
+            string replacement = "eval(\"debugger;\");";
+            var regex = new System.Text.RegularExpressions.Regex(pattern);
+            content = regex.Replace(content, replacement);
             return JavaScriptCompressor.Compress(content);
         }
     }
